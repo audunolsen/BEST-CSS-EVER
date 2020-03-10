@@ -5,16 +5,28 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sass": "node build-tasks/compile-sass.js"
+    "sass": "node build-tasks/compile-sass",
+    "pug": "node build-tasks/compile-pug"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "babel-plugin-transform-react-pug": "^7.0.1",
     "chokidar": "^3.3.1",
     "coffeescript": "^2.5.1",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
-    "preact": "^10.3.3",
-    "sass": "^1.26.2"
+    "pug-lexer": "^4.1.0",
+    "pug-linker": "^3.0.6",
+    "pug-load": "^2.0.12",
+    "pug-parser": "^5.0.1",
+    "pug-source-gen": "0.0.2",
+    "sass": "^1.26.2",
+    "strip-dirs": "^3.0.0"
+  },
+  "dependencies": {
+    "preact": "^10.3.3"
   }
 }
