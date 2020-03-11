@@ -5,26 +5,40 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sass": "node build-tasks/compile-sass",
-    "pug": "node build-tasks/compile-pug"
+    "server": "node tasks/localhost",
+    "sass": "node tasks/compile-sass",
+    "pug": "node tasks/compile-pug",
+    "js": "node tasks/compile-js",
+    "all": "npm run sass && npm run pug && npm run js",
+    "prepare": "snowpack --config config/snowpack.config.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "autoprefixer": "^9.7.4",
     "babel-plugin-transform-react-pug": "^7.0.1",
+    "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
     "coffeescript": "^2.5.1",
+    "cson-parser": "^4.0.4",
+    "cssnano": "^4.1.10",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
+    "mime": "^2.4.4",
+    "open": "^7.0.3",
+    "postcss-modules": "^1.5.0",
     "pug-lexer": "^4.1.0",
     "pug-linker": "^3.0.6",
     "pug-load": "^2.0.12",
     "pug-parser": "^5.0.1",
     "pug-source-gen": "0.0.2",
     "sass": "^1.26.2",
-    "strip-dirs": "^3.0.0"
+    "snowpack": "^1.6.0",
+    "strip-dirs": "^3.0.0",
+    "terser": "^4.6.6",
+    "yargs": "^15.3.0"
   },
   "dependencies": {
     "preact": "^10.3.3"

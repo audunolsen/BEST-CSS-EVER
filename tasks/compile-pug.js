@@ -6,11 +6,13 @@ const
     glob       = util.promisify(require('glob'));
     transform  = util.promisify(require('@babel/core').transform),
 
-    lex   = require("pug-lexer"),
-    parse = require("pug-parser"),
-    load  = require("pug-load"),
-    genSource = require('pug-source-gen'),
-    link = require('pug-linker');
+    lex        = require("pug-lexer"),
+    parse      = require("pug-parser"),
+    load       = require("pug-load"),
+    link       = require('pug-linker'),
+    pugFromAst = require('pug-source-gen'),
+    
+    { snowpackBabelConf } = require("../config/snowpack.config");
 
 (async () => {
 
@@ -20,30 +22,44 @@ const
 
     const entries = await Promise.all(files.map(async f => {
 
-        var ast = link(load.file(f, {lex: lex, parse: parse}));
-        const pug = `module.exports = pug\`\n${genSource(ast)}\n\``
-
+        let ast = link(load.file(f, {lex: lex, parse: parse}));
+        
+        (function escape(obj) {
+            
+            for (const key in obj) {
+                if (typeof obj[key] === "object") escape(obj[key]);
+                else if (key === "mustEscape") obj.escaped = true;
+            }
+            
+        })(ast);
+        
+        const pug = `import * as Preact from "preact";\nexport default pug\`\n${pugFromAst(ast)}\n\``;
+        
         const {code: js} = await transform(pug, {
             plugins: [
+                ["snowpack/assets/babel-plugin.js", snowpackBabelConf],
                 "transform-react-pug",
                 ["@babel/plugin-transform-react-jsx", {
-                  pragma     : "Preact.h",
-                  pragmaFrag : "Preact.Fragment",
+                    pragma     : "Preact.h",
+                    pragmaFrag : "Preact.Fragment",
                 }],
             ],
         });
-
-        return { filename : f, contents : js }
+        
+        return {
+            filename : f,
+            contents : js
+        }
 
     }));
 
     Promise.all(entries.map(({filename, contents}) => {
-
+    
         return fs.writeFile(modifyFile(filename, {
             extension: "pug.js",
             swapBase: "dist"
         }), contents, "utf8");
-
+    
     }));
 
 
@@ -55,16 +71,3 @@ const
     console.log("HOLY SHIT", e);
 
 });
-
-
-
-function traverse(o) {
-    for (var i in o) {
-        if (!!o[i] && typeof(o[i])=="object") {
-            console.log(i, o[i]);
-            traverse(o[i]);
-        } else {
-            console.log(i, o[i]);
-        }
-    }
-}

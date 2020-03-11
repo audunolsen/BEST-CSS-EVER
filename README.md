@@ -13,3 +13,6 @@ a h/react.createElement tree ready to be exported
 3. Filename (e.g. "template.pug") which can be imported
 as "import Template from 'template.pug'"
 then "render(<Template/>)"
+
+
+regex for removing unescaped shit
