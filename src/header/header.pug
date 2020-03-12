@@ -1,4 +1,16 @@
-header(role = "header")
+script.
+    const {state: s, props: p} = this;
+    console.log(this.props.propTest);
+    
+link(rel="stylesheet" type="text/css" href="./header.css")
+
+header(role="header")
     h1 This is a heading
     p this is the header
+    
+    p heheheh #{p.propTest}
+    
+    if s.show
+        p.greeting HELLO YOU BEATIFUL PERSON
+    
     include ../vector-art/_arrow.pug

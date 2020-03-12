@@ -15,4 +15,8 @@ as "import Template from 'template.pug'"
 then "render(<Template/>)"
 
 
-regex for removing unescaped shit
+IDEA!!!!!!!!!!
+
+Top level scripts should be removed from the ast and
+
+put at the top of the compiled JS

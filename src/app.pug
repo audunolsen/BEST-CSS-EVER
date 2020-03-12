@@ -1,9 +1,15 @@
 script.
-    import Header from "/header/header.js"
+    import Header from "/header/header.pug.js";
+    import Footer from "/footer/footer.pug.js";
+    
+    console.log("Hello from pug template");
+    
+    const num = 1, str = 2;
+    console.log(num + str);
 
-Header
+Header(propTest="this is a property")
 
-//- main
-//-     h1 Hello This is my beautiful webpage
-//-     
-//- Footer
+main(role="content")
+    h1 WELCOME
+
+Footer

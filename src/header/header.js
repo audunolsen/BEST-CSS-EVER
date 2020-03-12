@@ -1,14 +1,18 @@
-import * as Preact from "preact";
-import Template from "./header.pug.js"
+import { Component } from "preact";
+import Template from "/header/header.pug.js"
 
-export default class Header extends Preact.Component {
+export default class Header extends Component {
 
     constructor() {
         super();
-        this.state = {
 
-        };
+        Object.assign(this, {
+
+            state: { stateTest: true }
+
+        });
+
     }
 
-    render() { return Template; }
+    render() { return Template.call(this); }
 }
