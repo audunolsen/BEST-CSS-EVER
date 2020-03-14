@@ -1,16 +1,18 @@
 script.
-    const {state: s, props: p} = this;
-    console.log(this.props.propTest);
+    import styles from "./header.sass";
+    const {props: p, state: s} = this;
     
-link(rel="stylesheet" type="text/css" href="./header.css")
+link(rel="stylesheet" type="text/css" href="/header/header.css")
 
-header(role="header")
+header(className=styles.headerPink role="header")
     h1 This is a heading
     p this is the header
-    
+
     p heheheh #{p.propTest}
     
+    p OOOOOH #{"jfdkls"} why doe
+
     if s.show
-        p.greeting HELLO YOU BEATIFUL PERSON
-    
+        p.greeting #[strong HELLO] YOU BEATIFUL PERSON
+
     include ../vector-art/_arrow.pug

@@ -1,5 +1,5 @@
 import { Component } from "preact";
-import Template from "/header/header.pug.js"
+import Template from "/header/header.pug"
 
 export default class Header extends Component {
 
@@ -8,11 +8,12 @@ export default class Header extends Component {
 
         Object.assign(this, {
 
-            state: { stateTest: true }
+            state: { show: true }
 
         });
 
     }
 
     render() { return Template.call(this); }
+
 }

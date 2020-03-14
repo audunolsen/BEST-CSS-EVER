@@ -1,4 +1,4 @@
-// This code might come accross as a little freaky, but let me explain
+// This code might come accross as a little freaky, but let me explain…
 //
 
 const
@@ -6,8 +6,8 @@ const
     path       = require("path"),
     fs         = require("fs-extra"),
     modifyFile = require("../utils/modify-file"),
-    glob       = util.promisify(require('glob'));
-    transform  = util.promisify(require('@babel/core').transform),
+    glob       = util.promisify(require("glob"));
+    transform  = util.promisify(require("@babel/core").transform),
 
     lex        = require("pug-lexer"),
     parse      = require("pug-parser"),
@@ -16,7 +16,9 @@ const
     pugFromAst = require('pug-source-gen'),
 
     regexPatterns = require("../utils/regex-patterns"),
-    { snowpackBabelConf } = require("../config/snowpack.config");
+    str           = require("../utils/better-template-strings"),
+
+    { plugins: babelPlugins } = require("../config/babel.config");
 
 (async () => {
 
@@ -34,51 +36,58 @@ const
 
 
         (function escape(obj) {
+
             for (const key in obj) {
 
-                if (key === "mustEscape") obj.escaped = true;
-                if (key === "type" && obj[key] === "Code") {
-                  obj.type = "Text";
-                  obj.val = `#{${obj.val}}`;
-                }
+                if (key === "attrs")
+                    obj[key].forEach(e => e.escaped = true);
 
-                if (typeof obj[key] === "object") escape(obj[key]);
+                if (typeof obj[key] === "object" && key !== "attrs")
+                    escape(obj[key]);
+
+
             }
+
         })(ast);
 
         pug = pugFromAst(ast)
-            .replace(regexPatterns.pugInterpolation, m => m.slice(1));
+            .replace(regexPatterns.pugInterpolation,  m => "#" + m.slice(1))
+            .replace(regexPatterns.pugUnbufferedCode, m => {
 
-        console.log(pug);
+                const arr = m.split("");
+                arr.splice(m.length-2, 1);
+
+                return arr;
+
+            });
 
         if (script) {
-
             imports = (script.match(regexPatterns.jsImports) || []).join("\n");
             script  = script.replace(regexPatterns.jsImports, "").trim();
-
         }
 
         pug =
-            `${imports || ""}\n` +
-            "import * as Preact from \"preact\";\n" +
-            "export default function() {" +
-            `${script || ""}\n` +
-            `return pug\`\n${pug}\n\`}`;
+            (imports ? (imports + "\n") : "")         +
+            "import { h, Fragment } from 'preact';\n" +
+            "export default function() {\n"           +
+                (script ? (script + "\n") : "")       +
+                `return pug\`\n${pug}\n\``            +
+            "}"
 
         const {code: js} = await transform(pug, {
-            plugins: [
-                // For node_modules like imports of snowpack bundles
-                ["snowpack/assets/babel-plugin.js", snowpackBabelConf],
-                "transform-react-pug",
-                "transform-jsx-classname-components",
-                ["@babel/plugin-transform-react-jsx", {
-                    pragma     : "Preact.h",
-                    pragmaFrag : "Preact.Fragment",
-                }],
-            ],
+            plugins: babelPlugins.concat([
+                ["transform-react-pug", { /*classAttribute: "styleName"*/ }],
+                // "transform-jsx-classname-components",
+                // Pug-React & PragmaFrag opt aren't friends, see:
+                // github.com/pugjs/babel-plugin-transform-react-pug/issues/120
+                ["@babel/plugin-transform-react-jsx", { pragma: "h" }],
+            ])
         });
 
-        return { filename : f, contents : js }
+        return {
+          filename : f,
+          contents : js.replace(regexPatterns.reactFrags, "Fragment")
+        }
 
     }));
 
@@ -114,3 +123,26 @@ function getTopLevelScript(obj, parent, level = 0) {
     }
 
 }
+
+// [
+//     // For node_modules like imports of snowpack bundles
+//     ["snowpack/assets/babel-plugin.js", snowpackBabelConf],
+//     `${process.cwd()}/utils/babel-add-missing-import-ext.js`,
+//     ["transform-react-pug", { /*classAttribute: "styleName"*/ }],
+//     "transform-jsx-classname-components",
+//     // Pug-React & PragmaFrag opt aren't friends, see:
+//     // github.com/pugjs/babel-plugin-transform-react-pug/issues/120
+//     ["@babel/plugin-transform-react-jsx", { pragma: "h" }],
+// ],
+
+
+//- header(role="header" className=styles.headerKebabCase)
+//-     h1 This is a heading
+//-     p.styles.klasseNavn this is the header
+//-
+//-     p heheheh #{p.propTest}
+//-
+//-     if s.show
+//-         p.greeting HELLO YOU BEATIFUL PERSON
+//-
+//-     include ../vector-art/_arrow.pug

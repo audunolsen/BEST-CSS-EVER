@@ -19,7 +19,7 @@ const
         var {code} = await transform(contents, babelConf);
 
         // var {code} = terser.minify({[file]: code}, {
-        // 
+        //
         // });
 
         return fs.outputFile(modifyFile(file, {

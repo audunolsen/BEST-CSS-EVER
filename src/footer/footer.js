@@ -1,5 +1,5 @@
 import * as Preact from "preact";
-import Template from "./footer.pug.js";
+import Template from "./footer.pug";
 
 export default class Footer extends Preact.Component {
 

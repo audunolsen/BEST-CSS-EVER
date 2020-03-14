@@ -1,35 +1,29 @@
 const
-    path = require("path"),
-    fs   = require("fs-extra");
+    fs = require("fs-extra"),
+    modifyFile = require("../utils/modify-file");
 
-production = (ref = process.env.NODE_ENV) && ref.trim() === "production";
+production = (process.env.NODE_ENV || "").trim() === "production";
 
 module.exports = {
-    
-    plugins: [
-        
-        require("postcss-modules")({
-            getJSON: (cssFileName, json) => {
 
-                const file = path.format({
-                    ...path.parse(path
-                        .relative(process.cwd(), cssFileName)
-                        .replace("src", "dist")
-                    ),
-                    base: undefined,
-                    ext: '.css.json'
-                });
-                
-                fs.outputFile(file, JSON.stringify(json));
-                
+    plugins: [
+
+        require("postcss-modules")({
+            getJSON: (file, json) => {
+
+                fs.outputFile(modifyFile(file, {
+                  extension : "sass.js",
+                  swapBase  : "dist"
+                }), `export default ${JSON.stringify(json)}`);
+
             },
             camelCase: true
         }),
-        
+
         require("autoprefixer")(), // Todo browserlist
-        
+
         production && require("cssnano")({preset: "default"})
-        
+
     ].filter(e => e)
 
 };

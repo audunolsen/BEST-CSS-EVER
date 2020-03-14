@@ -18,6 +18,8 @@
     "@babel/core": "^7.8.7",
     "@babel/plugin-transform-react-jsx": "^7.8.3",
     "autoprefixer": "^9.7.4",
+    "babel-plugin-add-import-extension": "^1.3.0",
+    "babel-plugin-transform-imports": "^2.0.0",
     "babel-plugin-transform-jsx-classname-components": "0.0.3",
     "babel-plugin-transform-react-pug": "^7.0.1",
     "chalk": "^3.0.0",

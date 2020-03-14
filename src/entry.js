@@ -1,4 +1,4 @@
 import { render } from "preact";
-import Template from "/app.pug.js"
+import Template from "/app.pug"
 
 render(Template(), document.body);
