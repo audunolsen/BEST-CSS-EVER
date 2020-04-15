@@ -38,6 +38,17 @@ class SassWatcher {
                 writeOnLocked : false
             }
             
+            /* TODO;
+            Support adding new compile targtes while watcher is running
+            
+            This only works if compile targets originate from a glob
+            and matches said glob thus a meta key need to be added
+            to the targets object stating it's origin.
+            
+            As of now, "add" does nothing for new targets. If new sources/includes
+            are addded during watch then the watcher will respond to
+            them as expected. */
+            
         });
         
         this.watcher
@@ -288,7 +299,7 @@ function logSuccess (compiled, lint, start, end = performance.now()) {
         
         return entries;
         
-    }).join("\n\n");
+    }).join("\n");
 
     logger.success(
         oneLine`Sass watch: successfully compiled in ${Math.floor(end - start)}ms`,
