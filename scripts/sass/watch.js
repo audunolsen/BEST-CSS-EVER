@@ -42,7 +42,7 @@ class SassWatcher {
             Support adding new compile targtes while watcher is running
             
             This only works if compile targets originate from a glob
-            and matches said glob thus a meta key need to be added
+            and matches said glob, thus a meta key need to be added
             to the targets object stating it's origin.
             
             As of now, "add" does nothing for new targets. If new sources/includes
