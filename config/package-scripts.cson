@@ -1,0 +1,53 @@
+test: "echo \"Error: no test specified\" && exit 1"
+
+server: "node tasks/localhost"
+
+sass: "node --harmony scripts/sass/watch.js"
+
+pug: "node --harmony tasks/compile-pug"
+
+js: "node tasks/compile-js"
+
+all: "
+    npm run sass &&
+    npm run pug &&
+    npm run js"
+
+"sass" : "node --harmony scripts/sass/cli"
+
+"sass:obj": "npm run sass -- -w
+    -f.src/core.scss            dist/wierd-sub-directory/core.css
+    -f.src/header/header.scss   dist/lol/header.css"
+
+"sass:arr": "npm run sass --
+    -f src/core.scss
+       src/header/header.scss"
+
+"sass:glob": "npm run sass --
+    -f src/**/*.scss"
+
+"sass:watch": "npm run sass --
+    --watch
+    --lint
+    --lint-fix"
+
+"sass:all": "npm run sass --
+    --lint
+    --lint-fix
+    --lint-sources"
+
+"sass:lint": "npm run sass --
+    --lint
+    --lint-only
+    --lint-fix
+    --lint-sources"
+
+"cson:scripts": "node scripts/package-inject-cson
+    --key scripts
+    --file config/package-scripts.cson"
+
+"cson:config": "node scripts/package-inject-cson
+    --key config
+    --file config/package-config.cson"
+    
+prepare: "snowpack --config 'config/snowpack.config.js'"

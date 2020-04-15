@@ -3,7 +3,7 @@ module.exports = {
         "dest": "dist/web_modules",
     },
     
-    snowpackBabelConf: {
+    babelConfig: {
         dir: "web_modules",
         importMap: process.cwd() + "/dist/web_modules/import-map.json"
     }

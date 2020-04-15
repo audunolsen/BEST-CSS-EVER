@@ -1,24 +1,17 @@
-// This code might come accross as a little freaky, but let me explain…
-//
-
 const
-    util       = require('util'),
-    path       = require("path"),
-    fs         = require("fs-extra"),
-    modifyFile = require("../utils/modify-file"),
-    glob       = util.promisify(require("glob"));
-    transform  = util.promisify(require("@babel/core").transform),
-
-    lex        = require("pug-lexer"),
-    parse      = require("pug-parser"),
-    load       = require("pug-load"),
-    link       = require('pug-linker'),
-    pugFromAst = require('pug-source-gen'),
-
-    regexPatterns = require("../utils/regex-patterns"),
-    str           = require("../utils/better-template-strings"),
-
-    { plugins: babelPlugins } = require("../config/babel.config");
+    {promisify}             = require("util"),
+    path                    = require("path"),
+    fs                      = require("fs-extra"),
+    modifyFile              = require("../utils/modify-file"),
+    glob                    = promisify(require("glob"));
+    lex                     = require("pug-lexer"),
+    parse                   = require("pug-parser"),
+    load                    = require("pug-load"),
+    link                    = require('pug-linker'),
+    pugFromAst              = require('pug-source-gen'),
+    regexPatterns           = require("../utils/regex-patterns"),
+    {transformAsync: transform} = require("@babel/core"),
+    {plugins: babelPlugins} = require("../config/babel.config.js");
 
 (async () => {
 
@@ -34,8 +27,7 @@ const
             ast = link(load.file(f, {lex: lex, parse: parse})),
             script = getTopLevelScript(ast) || "";
 
-
-        (function escape(obj) {
+        (function escapeAttributes(obj) {
 
             for (const key in obj) {
 
@@ -43,8 +35,7 @@ const
                     obj[key].forEach(e => e.escaped = true);
 
                 if (typeof obj[key] === "object" && key !== "attrs")
-                    escape(obj[key]);
-
+                    escapeAttributes(obj[key]);
 
             }
 
@@ -74,14 +65,25 @@ const
                 `return pug\`\n${pug}\n\``            +
             "}"
 
-        const {code: js} = await transform(pug, {
+        var {code: js} = await transform(pug, {
             plugins: babelPlugins.concat([
-                ["transform-react-pug", { /*classAttribute: "styleName"*/ }],
-                // "transform-jsx-classname-components",
+                "transform-react-pug",
                 // Pug-React & PragmaFrag opt aren't friends, see:
                 // github.com/pugjs/babel-plugin-transform-react-pug/issues/120
-                ["@babel/plugin-transform-react-jsx", { pragma: "h" }],
+                `${process.cwd()}/utils/babel-css-modules.js`,
+                // ["@babel/plugin-transform-react-jsx", {
+                //     // pragma: "h",
+                //     // pragmaFrag: "Fragment"
+                // }],
+                
             ])
+        });
+        
+        var {code: js} = await transform(js, {
+            plugins: [["@babel/plugin-transform-react-jsx", {
+                pragma: "h",
+                pragmaFrag: "Fragment"
+            }]]
         });
 
         return {
@@ -123,26 +125,3 @@ function getTopLevelScript(obj, parent, level = 0) {
     }
 
 }
-
-// [
-//     // For node_modules like imports of snowpack bundles
-//     ["snowpack/assets/babel-plugin.js", snowpackBabelConf],
-//     `${process.cwd()}/utils/babel-add-missing-import-ext.js`,
-//     ["transform-react-pug", { /*classAttribute: "styleName"*/ }],
-//     "transform-jsx-classname-components",
-//     // Pug-React & PragmaFrag opt aren't friends, see:
-//     // github.com/pugjs/babel-plugin-transform-react-pug/issues/120
-//     ["@babel/plugin-transform-react-jsx", { pragma: "h" }],
-// ],
-
-
-//- header(role="header" className=styles.headerKebabCase)
-//-     h1 This is a heading
-//-     p.styles.klasseNavn this is the header
-//-
-//-     p heheheh #{p.propTest}
-//-
-//-     if s.show
-//-         p.greeting HELLO YOU BEATIFUL PERSON
-//-
-//-     include ../vector-art/_arrow.pug

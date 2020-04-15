@@ -1,0 +1,55 @@
+/*
+I've got the following file structure and
+want a quick way to set all my local Roboto fonts.
+../assets/fonts/Roboto
+  Roboto-Black.woff
+  Roboto-Black-Italic.woff
+  Roboto-Bold.woff
+  Roboto-Bold-Italic.woff
+  Roboto-Light.woff
+  Roboto-Light-Italic.woff
+  Roboto-Medium.woff
+  Roboto-Medium-Italic.woff
+  Roboto-Regular.woff
+  Roboto-Regular-Italic.woff
+  Roboto-Thin.woff
+  Roboto-Thin-Italic.woff
+*/
+
+$family: (
+    thin    : 100,
+    light   : 300,
+    regular : 400,
+    medium  : 500,
+    bold    : 700,
+    black   : 900,
+);
+
+@mixin font-face(
+    $type,
+    $weight,
+    $italic   : null,
+    $font     : "Roboto",
+    $basePath : "../assets/fonts/#{$font}/#{$font}"
+) {
+
+    @if $type { $type   : "-#{$type}"; }
+
+    @if $italic { $italic : "-Italic"; }
+
+    @font-face {
+        font-style: if($italic, italic, normal);
+        font-weight: $weight or normal;
+        font-family: $font;
+        src: url("#{$basePath}#{$type or ""}#{$italic or ""}.woff") format("woff");
+    }
+
+}
+
+@each $type, $weight in $family {
+
+    @include font-face($type, $weight);
+
+    @include font-face($type, $weight, $italic: true);
+
+}

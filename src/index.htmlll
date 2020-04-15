@@ -1,0 +1,10 @@
+// html
+
+html(lang="en")
+    
+head
+    meta(charset="utf-8")
+    title BEST CSS EVER
+    link(rel="stylesheet" href="core.css")
+
+body: script(type="module" src="entry.js")

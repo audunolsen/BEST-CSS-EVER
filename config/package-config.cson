@@ -1,0 +1,4 @@
+"source-directory"        : "src"
+"distribution-directory"  : "dist"
+"style-sources"           : "**/*.scss"
+"script-sources"          : "**/*.js"
