@@ -1,7 +1,7 @@
 const
     {basename}       = require("path"),
-    {readFile,
     {performance}    = require('perf_hooks'),
+    {readFile,
     writeFile}       = require("fs-extra"),
     {watch}          = require("chokidar"),
     {oneLine,
